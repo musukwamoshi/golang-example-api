@@ -128,7 +128,6 @@ func CreateUser(c *fiber.Ctx) error {
 	new := User{
 		Email: json.Email,
 		Hash:  password,
-		Salt:  json.Password,
 	}
 	found := User{}
 	query := User{Email: json.Email}
@@ -186,7 +185,6 @@ func DeleteUser(c *fiber.Ctx) error {
 		})
 	}
 	db.Model(&user).Association("Sessions").Delete()
-	//db.Model(&user).Association("Products").Delete()
 	db.Delete(&user)
 	c.ClearCookie("sessionid")
 	return c.JSON(fiber.Map{
@@ -216,7 +214,6 @@ func ChangePassword(c *fiber.Ctx) error {
 		})
 	}
 	user.Hash = hashAndSalt([]byte(json.NewPassword))
-	user.Salt = hashAndSalt([]byte(json.NewPassword))
 	db.Save(&user)
 	return c.JSON(fiber.Map{
 		"code":    200,
